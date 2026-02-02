@@ -37,7 +37,7 @@
 
 .outbound .avatar {
   background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--cyan-dim) 100%);
-  color: var(--dark-deep);
+  color: var(--light-primary);
   box-shadow: var(--shadow-glow-cyan-sm);
 }
 
@@ -85,7 +85,7 @@
 }
 
 .inbound .body {
-  background: var(--surface-elevated);
+  background: var(--surface-raised);
   border: 1px solid var(--border-subtle);
   border-top-left-radius: var(--radius-sm);
   color: var(--text-primary);
@@ -93,7 +93,7 @@
 
 .outbound .body {
   background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--cyan-dim) 100%);
-  color: var(--dark-deep);
+  color: var(--light-primary);
   border-top-right-radius: var(--radius-sm);
   box-shadow: var(--shadow-glow-cyan-sm);
 }
@@ -140,7 +140,7 @@
 }
 
 .outbound .htmlContent a {
-  color: var(--dark-deep);
+  color: var(--light-primary);
   opacity: 0.85;
 }
 
@@ -176,11 +176,11 @@
 }
 
 .outbound .expandBtn {
-  color: rgba(34, 40, 49, 0.7);
+  color: rgba(238, 238, 238, 0.7);
 }
 
 .outbound .expandBtn:hover {
-  color: var(--dark-deep);
+  color: var(--light-primary);
   background: rgba(255, 255, 255, 0.2);
 }
 

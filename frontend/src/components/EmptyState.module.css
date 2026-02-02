@@ -100,7 +100,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--dark-deep) 100%);
+  background: linear-gradient(135deg, var(--surface-raised) 0%, var(--surface-elevated) 100%);
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   border: 1px solid var(--border-cyan);
@@ -228,7 +228,7 @@
   margin-bottom: var(--space-6);
   font-size: 0.95rem;
   font-weight: 600;
-  color: var(--dark-deep);
+  color: var(--light-primary);
   background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--cyan-dim) 100%);
   border-radius: var(--radius-full);
   box-shadow: var(--shadow-md);
@@ -323,7 +323,7 @@
   font-family: var(--font-mono);
   font-size: 0.85rem;
   color: var(--cyan-primary);
-  background: var(--dark-deep);
+  background: var(--surface-elevated);
   padding: var(--space-3);
   border-radius: var(--radius-sm);
   word-break: break-all;
@@ -445,7 +445,7 @@
 .placeholderIcon {
   width: 44px;
   height: 44px;
-  background: linear-gradient(135deg, var(--surface-elevated) 0%, var(--dark-deep) 100%);
+  background: linear-gradient(135deg, var(--surface-raised) 0%, var(--surface-elevated) 100%);
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
 }
@@ -465,7 +465,7 @@
 
 .placeholderLine {
   height: 10px;
-  background: linear-gradient(90deg, var(--surface-elevated) 0%, var(--dark-deep) 50%, var(--surface-elevated) 100%);
+  background: linear-gradient(90deg, var(--surface-elevated) 0%, var(--surface-base) 50%, var(--surface-elevated) 100%);
   background-size: 200% 100%;
   border-radius: var(--radius-sm);
   animation: shimmer 2s ease-in-out infinite;

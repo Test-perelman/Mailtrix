@@ -63,7 +63,7 @@
 
 .refreshBtn:hover:not(:disabled) {
   color: var(--cyan-primary);
-  background: var(--dark-deep);
+  background: var(--surface-base);
   border-color: var(--border-cyan);
   box-shadow: var(--shadow-glow-cyan-sm);
 }
@@ -87,20 +87,20 @@
   max-height: 400px;
   overflow-y: auto;
   padding: var(--space-4);
-  background: var(--dark-deep);
+  background: var(--surface-elevated);
   border-radius: var(--radius-lg);
   margin-bottom: var(--space-4);
   border: 1px solid var(--border-subtle);
   position: relative;
 }
 
-/* Inner shadow for depth */
+/* Inner shadow for depth - lighter for light theme */
 .messagesContainer::before {
   content: '';
   position: absolute;
   inset: 0;
   border-radius: var(--radius-lg);
-  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
   pointer-events: none;
 }
 

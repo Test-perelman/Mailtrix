@@ -128,7 +128,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--dark-deep);
+  background: var(--surface-elevated);
   border-radius: var(--radius-full);
   color: var(--text-muted);
   border: 1px solid var(--border-subtle);
@@ -189,7 +189,7 @@
 }
 
 .badgeUnread {
-  color: var(--dark-deep);
+  color: var(--light-primary);
   background: var(--cyan-primary);
   font-weight: 700;
   box-shadow: var(--shadow-glow-cyan-sm);
@@ -204,7 +204,7 @@
   padding: 0 var(--space-2);
   font-size: 0.7rem;
   font-weight: 700;
-  color: var(--dark-deep);
+  color: var(--light-primary);
   background: var(--cyan-primary);
   border-radius: var(--radius-full);
   animation: pulse-glow 2s infinite;
@@ -246,7 +246,7 @@
 }
 
 .expandButton:hover {
-  background: var(--dark-deep);
+  background: var(--surface-base);
   color: var(--cyan-primary);
   border-color: var(--border-cyan);
 }
@@ -277,7 +277,7 @@
   font-size: 0.75rem;
   font-weight: 500;
   padding: var(--space-1) var(--space-3);
-  background: var(--dark-deep);
+  background: var(--surface-elevated);
   color: var(--cyan-primary);
   border-radius: var(--radius-full);
   border: 1px solid var(--border-cyan);
@@ -312,12 +312,12 @@
 
 .tabBtn:hover {
   color: var(--text-secondary);
-  background: var(--dark-deep);
+  background: var(--surface-base);
 }
 
 .tabBtn.tabActive {
   color: var(--cyan-primary);
-  background: var(--dark-deep);
+  background: var(--surface-base);
   box-shadow: var(--shadow-sm);
   border: 1px solid var(--border-cyan);
 }
@@ -396,7 +396,7 @@
 .notesInput {
   width: 100%;
   padding: var(--space-3) var(--space-4);
-  background: var(--dark-deep);
+  background: var(--surface-base);
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   font-size: 0.9rem;
@@ -434,7 +434,7 @@
   padding: var(--space-3) var(--space-5);
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--dark-deep);
+  color: var(--light-primary);
   background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--cyan-dim) 100%);
   border-radius: var(--radius-full);
   transition: all var(--duration-fast) var(--ease-out);

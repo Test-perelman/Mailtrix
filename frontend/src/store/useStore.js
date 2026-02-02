@@ -52,10 +52,16 @@ loadFromStorage();
 
 export const useJobMatches = () => {
   const [matches, setMatches] = useState([...globalMatches]);
+  const [threads, setThreadsState] = useState({ ...globalThreads });
 
   useEffect(() => {
     listeners.add(setMatches);
     return () => listeners.delete(setMatches);
+  }, []);
+
+  useEffect(() => {
+    threadListeners.add(setThreadsState);
+    return () => threadListeners.delete(setThreadsState);
   }, []);
 
   const addJobMatch = useCallback((jobMatch) => {
@@ -167,8 +173,8 @@ export const useJobMatches = () => {
   }, []);
 
   const getThreadsByJobId = useCallback((jobId) => {
-    return globalThreads[jobId] || [];
-  }, []);
+    return threads[jobId] || [];
+  }, [threads]);
 
   const markThreadsRead = useCallback((jobId) => {
     if (globalThreads[jobId]) {
