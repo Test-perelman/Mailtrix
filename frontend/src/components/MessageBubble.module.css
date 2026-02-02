@@ -1,0 +1,219 @@
+.bubble {
+  display: flex;
+  gap: var(--space-3);
+  max-width: 85%;
+  margin-bottom: var(--space-4);
+}
+
+.inbound {
+  align-self: flex-start;
+  flex-direction: row;
+}
+
+.outbound {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.inbound .avatar {
+  background: var(--surface-elevated);
+  color: var(--text-muted);
+  border: 1px solid var(--border-subtle);
+}
+
+.outbound .avatar {
+  background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--cyan-dim) 100%);
+  color: var(--dark-deep);
+  box-shadow: var(--shadow-glow-cyan-sm);
+}
+
+.content {
+  flex: 1;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-1);
+}
+
+.inbound .header {
+  flex-direction: row;
+}
+
+.outbound .header {
+  flex-direction: row-reverse;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.outbound .name {
+  color: var(--cyan-primary);
+}
+
+.time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.body {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  line-height: 1.65;
+  position: relative;
+}
+
+.inbound .body {
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  border-top-left-radius: var(--radius-sm);
+  color: var(--text-primary);
+}
+
+.outbound .body {
+  background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--cyan-dim) 100%);
+  color: var(--dark-deep);
+  border-top-right-radius: var(--radius-sm);
+  box-shadow: var(--shadow-glow-cyan-sm);
+}
+
+/* Decorative corner accent for outbound */
+.outbound .body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), transparent);
+  border-top-right-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+.textContent {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.htmlContent {
+  word-break: break-word;
+}
+
+.htmlContent p {
+  margin: 0 0 var(--space-2) 0;
+}
+
+.htmlContent p:last-child {
+  margin-bottom: 0;
+}
+
+.htmlContent a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.inbound .htmlContent a {
+  color: var(--cyan-primary);
+}
+
+.outbound .htmlContent a {
+  color: var(--dark-deep);
+  opacity: 0.85;
+}
+
+.outbound .htmlContent a:hover {
+  opacity: 1;
+}
+
+.htmlContent ul,
+.htmlContent ol {
+  margin: var(--space-2) 0;
+  padding-left: var(--space-5);
+}
+
+.htmlContent li {
+  margin-bottom: var(--space-1);
+}
+
+.expandBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-size: 12px;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.expandBtn:hover {
+  color: var(--cyan-primary);
+  background: var(--accent-cyan-glow);
+}
+
+.outbound .expandBtn {
+  color: rgba(34, 40, 49, 0.7);
+}
+
+.outbound .expandBtn:hover {
+  color: var(--dark-deep);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Unread indicator */
+.bubble.unread .body {
+  border-color: var(--cyan-primary);
+}
+
+.bubble.unread::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -8px;
+  width: 4px;
+  height: 100%;
+  background: var(--cyan-primary);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 8px var(--cyan-primary);
+}
+
+@media (max-width: 640px) {
+  .bubble {
+    max-width: 95%;
+  }
+
+  .body {
+    padding: var(--space-2) var(--space-3);
+    font-size: 13px;
+  }
+
+  .avatar {
+    width: 30px;
+    height: 30px;
+    font-size: 12px;
+  }
+}

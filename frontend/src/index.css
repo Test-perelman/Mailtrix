@@ -1,0 +1,553 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* ==========================================
+     MAILTRIX DESIGN SYSTEM - Cyber Dark Theme
+     Color Palette: #222831 #393E46 #00ADB5 #EEEEEE
+     ========================================== */
+
+  /* Core palette */
+  --dark-deep: #222831;
+  --dark-mid: #393E46;
+  --dark-surface: #2a3038;
+  --dark-elevated: #323a45;
+  --cyan-primary: #00ADB5;
+  --cyan-bright: #00d4de;
+  --cyan-dim: #008b91;
+  --light-primary: #EEEEEE;
+  --light-dim: #b8b8b8;
+  --light-muted: #7a8290;
+
+  /* Semantic surfaces */
+  --surface-base: var(--dark-deep);
+  --surface-raised: var(--dark-surface);
+  --surface-elevated: var(--dark-elevated);
+  --surface-overlay: rgba(34, 40, 49, 0.95);
+  --surface-glass: rgba(57, 62, 70, 0.6);
+
+  /* Borders with cyan glow potential */
+  --border-subtle: rgba(238, 238, 238, 0.06);
+  --border-default: rgba(238, 238, 238, 0.12);
+  --border-strong: rgba(238, 238, 238, 0.2);
+  --border-cyan: rgba(0, 173, 181, 0.3);
+  --border-cyan-glow: rgba(0, 173, 181, 0.5);
+
+  /* Text hierarchy */
+  --text-primary: var(--light-primary);
+  --text-secondary: var(--light-dim);
+  --text-muted: var(--light-muted);
+  --text-inverse: var(--dark-deep);
+  --text-cyan: var(--cyan-primary);
+
+  /* Accent colors */
+  --accent-success: #00d68f;
+  --accent-success-dim: rgba(0, 214, 143, 0.15);
+  --accent-warning: #ffaa00;
+  --accent-warning-dim: rgba(255, 170, 0, 0.15);
+  --accent-error: #ff4757;
+  --accent-error-dim: rgba(255, 71, 87, 0.15);
+  --accent-cyan-glow: rgba(0, 173, 181, 0.2);
+
+  /* Spacing scale */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --space-9: 96px;
+
+  /* Typography */
+  --font-display: 'Outfit', system-ui, sans-serif;
+  --font-body: 'Outfit', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Border radius - sharper, more techy */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+
+  /* Shadows - cyan tinted */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-glow-cyan: 0 0 30px rgba(0, 173, 181, 0.4), 0 0 60px rgba(0, 173, 181, 0.2);
+  --shadow-glow-cyan-sm: 0 0 15px rgba(0, 173, 181, 0.3);
+  --shadow-glow-success: 0 0 20px rgba(0, 214, 143, 0.3);
+  --shadow-glow-error: 0 0 20px rgba(255, 71, 87, 0.3);
+
+  /* Transitions */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-instant: 100ms;
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  --duration-slower: 600ms;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--surface-base);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+#root {
+  min-height: 100vh;
+  position: relative;
+}
+
+/* ==========================================
+   AMBIENT BACKGROUND - Cyber Grid Effect
+   ========================================== */
+
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Grid pattern overlay */
+.ambient-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 173, 181, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 173, 181, 0.03) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: grid-shift 20s linear infinite;
+}
+
+/* Floating cyan orb 1 */
+.ambient-bg::after {
+  content: '';
+  position: absolute;
+  top: 10%;
+  right: 10%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 173, 181, 0.15) 0%, transparent 70%);
+  animation: float-orb 15s ease-in-out infinite;
+  filter: blur(40px);
+}
+
+@keyframes grid-shift {
+  0% { transform: translate(0, 0); }
+  100% { transform: translate(50px, 50px); }
+}
+
+@keyframes float-orb {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+  33% {
+    transform: translate(-30px, 20px) scale(1.1);
+    opacity: 0.8;
+  }
+  66% {
+    transform: translate(20px, -15px) scale(0.9);
+    opacity: 0.5;
+  }
+}
+
+/* ==========================================
+   SCROLLBAR - Sleek Cyber Style
+   ========================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--dark-mid);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--cyan-primary), var(--cyan-dim));
+  border-radius: var(--radius-full);
+  border: 2px solid var(--dark-mid);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, var(--cyan-bright), var(--cyan-primary));
+}
+
+/* ==========================================
+   SELECTION - Cyan Highlight
+   ========================================== */
+
+::selection {
+  background: var(--cyan-primary);
+  color: var(--dark-deep);
+}
+
+/* ==========================================
+   BUTTON RESET
+   ========================================== */
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* ==========================================
+   INPUT RESET
+   ========================================== */
+
+input, textarea {
+  font-family: inherit;
+  border: none;
+  outline: none;
+  background: none;
+  font-size: inherit;
+  color: inherit;
+}
+
+/* ==========================================
+   FOCUS STATES - Cyan Glow
+   ========================================== */
+
+:focus-visible {
+  outline: 2px solid var(--cyan-primary);
+  outline-offset: 2px;
+}
+
+/* ==========================================
+   KEYFRAME ANIMATIONS
+   ========================================== */
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slide-down {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(0, 173, 181, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 25px rgba(0, 173, 181, 0.6), 0 0 40px rgba(0, 173, 181, 0.3);
+  }
+}
+
+@keyframes pulse-soft {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes border-glow-pulse {
+  0%, 100% {
+    border-color: rgba(0, 173, 181, 0.3);
+  }
+  50% {
+    border-color: rgba(0, 173, 181, 0.6);
+  }
+}
+
+@keyframes text-glow {
+  0%, 100% {
+    text-shadow: 0 0 10px rgba(0, 173, 181, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(0, 173, 181, 0.8), 0 0 30px rgba(0, 173, 181, 0.4);
+  }
+}
+
+@keyframes scan-line {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+/* ==========================================
+   UTILITY CLASSES
+   ========================================== */
+
+.text-display {
+  font-family: var(--font-display);
+}
+
+.text-mono {
+  font-family: var(--font-mono);
+}
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+.text-cyan { color: var(--cyan-primary); }
+.text-success { color: var(--accent-success); }
+.text-error { color: var(--accent-error); }
+
+/* ==========================================
+   GLASS CARD - Glassmorphism Dark
+   ========================================== */
+
+.glass-card {
+  background: var(--surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* ==========================================
+   GRADIENT TEXT - Cyan to White
+   ========================================== */
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--cyan-primary) 0%, var(--light-primary) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ==========================================
+   GLOW BUTTON - Primary CTA Style
+   ========================================== */
+
+.btn-glow {
+  position: relative;
+  background: linear-gradient(135deg, var(--cyan-primary), var(--cyan-dim));
+  color: var(--dark-deep);
+  font-weight: 600;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  transition: all var(--duration-fast) var(--ease-out);
+  overflow: hidden;
+}
+
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, var(--cyan-bright), var(--cyan-primary));
+  opacity: 0;
+  transition: opacity var(--duration-fast) var(--ease-out);
+}
+
+.btn-glow:hover::before {
+  opacity: 1;
+}
+
+.btn-glow:hover {
+  box-shadow: var(--shadow-glow-cyan);
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   CYBER BORDER - Animated Border Effect
+   ========================================== */
+
+.cyber-border {
+  position: relative;
+}
+
+.cyber-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, var(--cyan-primary), transparent, var(--cyan-primary));
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: border-glow-pulse 3s ease-in-out infinite;
+}
+
+/* ==========================================
+   SCAN LINE EFFECT
+   ========================================== */
+
+.scan-line-effect::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--cyan-primary), transparent);
+  opacity: 0.3;
+  animation: scan-line 8s linear infinite;
+  pointer-events: none;
+}
+
+/* ==========================================
+   DOT PATTERN OVERLAY
+   ========================================== */
+
+.dot-pattern {
+  position: relative;
+}
+
+.dot-pattern::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(0, 173, 181, 0.15) 1px, transparent 1px);
+  background-size: 16px 16px;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ==========================================
+   RESPONSIVE UTILITIES
+   ========================================== */
+
+@media (max-width: 768px) {
+  :root {
+    --space-6: 24px;
+    --space-7: 32px;
+    --space-8: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --space-5: 20px;
+    --space-6: 20px;
+  }
+}
+
+/* ==========================================
+   LOADING SKELETON
+   ========================================== */
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--dark-mid) 0%,
+    var(--dark-elevated) 50%,
+    var(--dark-mid) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+  border-radius: var(--radius-sm);
+}
+
+/* ==========================================
+   NOTIFICATION DOT - Pulsing
+   ========================================== */
+
+.notification-dot {
+  width: 8px;
+  height: 8px;
+  background: var(--cyan-primary);
+  border-radius: var(--radius-full);
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* ==========================================
+   STATUS INDICATORS
+   ========================================== */
+
+.status-online {
+  background: var(--accent-success);
+  box-shadow: 0 0 10px var(--accent-success);
+}
+
+.status-offline {
+  background: var(--accent-error);
+}
+
+.status-pending {
+  background: var(--accent-warning);
+  animation: pulse-soft 2s ease-in-out infinite;
+}

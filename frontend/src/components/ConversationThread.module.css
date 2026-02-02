@@ -1,0 +1,158 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: var(--space-4);
+  padding-top: var(--space-4);
+  position: relative;
+}
+
+/* Subtle gradient line on top */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan-primary), transparent);
+  opacity: 0.3;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+}
+
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--cyan-primary);
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.count {
+  font-size: 12px;
+  color: var(--cyan-primary);
+  padding: var(--space-1) var(--space-2);
+  background: var(--accent-cyan-glow);
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-cyan);
+}
+
+.refreshBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-full);
+  color: var(--text-muted);
+  background: var(--surface-elevated);
+  border: 1px solid var(--border-subtle);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.refreshBtn:hover:not(:disabled) {
+  color: var(--cyan-primary);
+  background: var(--dark-deep);
+  border-color: var(--border-cyan);
+  box-shadow: var(--shadow-glow-cyan-sm);
+}
+
+.refreshBtn:disabled {
+  opacity: 0.5;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.messagesContainer {
+  flex: 1;
+  min-height: 200px;
+  max-height: 400px;
+  overflow-y: auto;
+  padding: var(--space-4);
+  background: var(--dark-deep);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--border-subtle);
+  position: relative;
+}
+
+/* Inner shadow for depth */
+.messagesContainer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.messagesList {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
+}
+
+.emptyState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 150px;
+  text-align: center;
+  color: var(--text-muted);
+}
+
+.emptyIcon {
+  margin-bottom: var(--space-3);
+  opacity: 0.3;
+  color: var(--cyan-primary);
+}
+
+.emptyState p {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-1);
+}
+
+.emptyState span {
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .messagesContainer {
+    max-height: 300px;
+  }
+}
+
+@media (max-width: 640px) {
+  .header {
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .messagesContainer {
+    padding: var(--space-3);
+    max-height: 250px;
+  }
+}

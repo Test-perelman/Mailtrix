@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "n8n-mcp": {
+      "command": "npx",
+      "args": ["n8n-mcp"],
+      "env": {
+        "MCP_MODE": "stdio",
+        "LOG_LEVEL": "error",
+        "DISABLE_CONSOLE_OUTPUT": "true",
+        "N8N_API_URL": "https://n8n.352674918.xyz",
+        "N8N_API_KEY": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI0MjM5ZjJlOS04MWM1LTQ2M2YtYTFhNC1hMDQ3ZTIyNmJiODMiLCJpc3MiOiJuOG4iLCJhdWQiOiJwdWJsaWMtYXBpIiwiaWF0IjoxNzY5NTkyNTAzfQ.-tQ1b3leI-HQLBaObikbaBvbsJsodBoyr3zJn_12wHo"
+      }
+    },
+    "netlify-mcp": {
+      "command": "npx",
+      "args": ["-y", "@netlify/mcp"],
+      "env": {
+        "NETLIFY_PERSONAL_ACCESS_TOKEN": "nfp_5GSk3hBwSagZjCB2r8NFNSrubP5WHLoL280c"
+      }
+    }
+  }
+}
