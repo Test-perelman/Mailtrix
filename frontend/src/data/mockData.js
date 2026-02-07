@@ -153,8 +153,8 @@ export const MOCK_JOBS = [
     received_at: hoursAgo(8),
     required_skills: ['Python', 'TensorFlow', 'PyTorch', 'MLOps', 'AWS SageMaker'],
     min_experience: 4,
-    unread_count: 0,
-    thread_count: 0,
+    unread_count: 1,
+    thread_count: 3,
     candidates: [
       {
         match_id: 'MATCH008',
@@ -237,7 +237,7 @@ export const MOCK_JOBS = [
     required_skills: ['Swift', 'SwiftUI', 'UIKit', 'Core Data', 'Xcode'],
     min_experience: 3,
     unread_count: 0,
-    thread_count: 1,
+    thread_count: 2,
     candidates: [
       {
         match_id: 'MATCH013',
@@ -262,7 +262,7 @@ export const MOCK_JOBS = [
     required_skills: ['Apache Spark', 'Databricks', 'Python', 'Delta Lake', 'Azure'],
     min_experience: 4,
     unread_count: 0,
-    thread_count: 0,
+    thread_count: 2,
     candidates: [
       {
         match_id: 'MATCH014',
@@ -358,8 +358,8 @@ export const MOCK_JOBS = [
     received_at: daysAgo(4),
     required_skills: ['Angular', 'TypeScript', 'RxJS', 'NgRx', 'Jest'],
     min_experience: 3,
-    unread_count: 0,
-    thread_count: 0,
+    unread_count: 1,
+    thread_count: 3,
     candidates: [
       {
         match_id: 'MATCH019',
@@ -420,7 +420,7 @@ export const MOCK_JOBS = [
     required_skills: ['Solidity', 'Ethereum', 'Smart Contracts', 'Web3.js', 'DeFi'],
     min_experience: 2,
     unread_count: 0,
-    thread_count: 1,
+    thread_count: 2,
     candidates: [
       {
         match_id: 'MATCH022',
@@ -453,6 +453,84 @@ export const MOCK_JOBS = [
 // ============================================
 
 export const MOCK_THREADS = {
+  'JOB004': [
+    {
+      id: 'MSG_JOB004_1',
+      direction: 'inbound',
+      from_name: 'Ryan Miller',
+      from_email: 'ryan.m@talentbridge.co',
+      body: 'Hi,\n\nWe have an urgent need for a Python/ML Engineer at a major tech company in Seattle. Looking for someone with TensorFlow/PyTorch experience and MLOps skills.\n\nThis is a full-time position with excellent benefits. Can you help?',
+      sent_at: hoursAgo(10),
+      is_read: true
+    },
+    {
+      id: 'MSG_JOB004_2',
+      direction: 'outbound',
+      from_name: 'Mailtrix System',
+      from_email: 'no-reply@mailtrix.app',
+      body: 'Ryan,\n\nI have 3 excellent candidates for this role:\n\n1. Lisa Wang - PhD in ML, FAANG production experience\n2. Ahmed Hassan - Strong CV background, AWS certified\n3. Rachel Green - Data science expert, learning MLOps\n\nLisa is particularly strong with both TensorFlow and PyTorch. Resumes attached.',
+      sent_at: hoursAgo(9),
+      is_read: true
+    },
+    {
+      id: 'MSG_JOB004_3',
+      direction: 'inbound',
+      from_name: 'Ryan Miller',
+      from_email: 'ryan.m@talentbridge.co',
+      body: 'Lisa looks perfect! Can we schedule a technical interview for tomorrow?',
+      sent_at: hoursAgo(7),
+      is_read: false
+    }
+  ],
+  'JOB007': [
+    {
+      id: 'MSG_JOB007_1',
+      direction: 'inbound',
+      from_name: 'Amanda Taylor',
+      from_email: 'amanda.t@datarecruit.com',
+      body: 'Looking for a Data Engineer with Spark/Databricks experience for a client in Denver. Delta Lake knowledge is a plus. This is a hybrid role.',
+      sent_at: daysAgo(2) + 'T08:00:00Z',
+      is_read: true
+    },
+    {
+      id: 'MSG_JOB007_2',
+      direction: 'outbound',
+      from_name: 'Mailtrix System',
+      from_email: 'no-reply@mailtrix.app',
+      body: 'Amanda,\n\nI\'ve found two great candidates:\n\n1. Carlos Rivera - Databricks certified, 5 years Spark experience\n2. Michelle Lee - Strong Spark/Scala, learning Databricks\n\nCarlos has specific Delta Lake experience. Both are interested in Denver.',
+      sent_at: daysAgo(2) + 'T09:30:00Z',
+      is_read: true
+    }
+  ],
+  'JOB010': [
+    {
+      id: 'MSG_JOB010_1',
+      direction: 'inbound',
+      from_name: 'Nicole Brown',
+      from_email: 'nicole.b@codingtalent.io',
+      body: 'Need an Angular developer for a fintech client in Miami. Strong TypeScript and RxJS skills required. Experience with NgRx is a plus.',
+      sent_at: daysAgo(4) + 'T11:00:00Z',
+      is_read: true
+    },
+    {
+      id: 'MSG_JOB010_2',
+      direction: 'outbound',
+      from_name: 'Mailtrix System',
+      from_email: 'no-reply@mailtrix.app',
+      body: 'Nicole,\n\nI have two candidates for your Angular position:\n\n1. Maria Santos - Angular specialist since v4, Miami based, NgRx expert\n2. Jason White - Strong Angular + React, versatile frontend dev\n\nMaria is local to Miami and immediately available.',
+      sent_at: daysAgo(4) + 'T12:00:00Z',
+      is_read: true
+    },
+    {
+      id: 'MSG_JOB010_3',
+      direction: 'inbound',
+      from_name: 'Nicole Brown',
+      from_email: 'nicole.b@codingtalent.io',
+      body: 'Maria sounds great! What\'s her rate expectation?',
+      sent_at: daysAgo(3) + 'T10:00:00Z',
+      is_read: false
+    }
+  ],
   'JOB001': [
     {
       id: 'MSG001',
@@ -596,6 +674,15 @@ export const MOCK_THREADS = {
       body: 'Looking for an iOS developer for a remote position. Must know SwiftUI. This is for a well-funded health tech startup.',
       sent_at: daysAgo(1) + 'T09:00:00Z',
       is_read: true
+    },
+    {
+      id: 'MSG015b',
+      direction: 'outbound',
+      from_name: 'Mailtrix System',
+      from_email: 'no-reply@mailtrix.app',
+      body: 'Chris,\n\nKevin Nguyen is a perfect fit - 4 years iOS experience with published SwiftUI apps and expertise in Combine framework.\n\nHe\'s available for remote work immediately. Resume attached.',
+      sent_at: daysAgo(1) + 'T10:30:00Z',
+      is_read: true
     }
   ],
   'JOB008': [
@@ -702,6 +789,15 @@ export const MOCK_THREADS = {
       from_email: 'tech@web3talent.xyz',
       body: 'gm fren,\n\nLooking for a Solidity dev for a new DeFi protocol. Must have experience with auditing and understand MEV. Remote OK, token compensation available.\n\nngmi without the right person tbh',
       sent_at: daysAgo(6) + 'T20:00:00Z',
+      is_read: true
+    },
+    {
+      id: 'MSG027',
+      direction: 'outbound',
+      from_name: 'Mailtrix System',
+      from_email: 'no-reply@mailtrix.app',
+      body: 'gm!\n\nI have two solid candidates for you:\n\n1. Satoshi Yamamoto - Built 5 DeFi protocols, security audit experience, deep MEV knowledge\n2. Elena Petrova - Multi-chain dev (Solana + Ethereum), Rust background\n\nBoth are ready for remote work. Satoshi is especially strong on audit/security side.\n\nwagmi',
+      sent_at: daysAgo(6) + 'T21:00:00Z',
       is_read: true
     }
   ]
