@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Mail, Zap, Clock, Users, CheckCircle, AlertCircle } from 'lucide-react';
 import styles from './Header.module.css';
+import ThemeToggle from './ThemeToggle';
 
 export default function Header({ stats }) {
   return (
@@ -113,6 +114,7 @@ export default function Header({ stats }) {
             <Clock size={14} />
             <span>{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
           </div>
+          <ThemeToggle />
         </motion.div>
       </div>
 
