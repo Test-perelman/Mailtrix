@@ -12,6 +12,21 @@
   to = "/.netlify/functions/matches"
   status = 200
 
+[[redirects]]
+  from = "/api/pending-matches"
+  to = "/.netlify/functions/pending-matches"
+  status = 200
+
+[[redirects]]
+  from = "/api/thread-update"
+  to = "/.netlify/functions/thread-update"
+  status = 200
+
+[[redirects]]
+  from = "/api/pending-threads"
+  to = "/.netlify/functions/pending-threads"
+  status = 200
+
 # SPA fallback - all other routes go to index.html
 [[redirects]]
   from = "/*"

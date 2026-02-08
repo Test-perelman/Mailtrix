@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@netlify/blobs": "^10.6.0",
     "date-fns": "^4.1.0",
     "dompurify": "^3.3.1",
     "framer-motion": "^12.29.2",

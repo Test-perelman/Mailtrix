@@ -1,7 +1,9 @@
 // Netlify serverless function to receive thread updates from n8n
-// POST /api/thread-update
+// POST /api/thread-update - stores in Netlify Blobs
 
-export async function handler(event, context) {
+import { getStore } from "@netlify/blobs";
+
+export async function handler(event) {
   // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
@@ -15,13 +17,10 @@ export async function handler(event, context) {
     };
   }
 
-  // Only allow POST
   if (event.httpMethod !== 'POST') {
     return {
       statusCode: 405,
-      headers: {
-        'Access-Control-Allow-Origin': '*'
-      },
+      headers: { 'Access-Control-Allow-Origin': '*' },
       body: JSON.stringify({ error: 'Method not allowed' })
     };
   }
@@ -29,7 +28,6 @@ export async function handler(event, context) {
   try {
     const payload = JSON.parse(event.body);
 
-    // Validate required fields
     if (!payload.job_id || !payload.message) {
       return {
         statusCode: 400,
@@ -44,7 +42,6 @@ export async function handler(event, context) {
       };
     }
 
-    // Validate message structure
     const { message } = payload;
     if (!message.id || !message.direction || !message.body) {
       return {
@@ -60,9 +57,13 @@ export async function handler(event, context) {
       };
     }
 
-    console.log('Received thread update:', JSON.stringify(payload, null, 2));
+    // Store in Netlify Blobs
+    const store = getStore({ name: "mailtrix-threads", consistency: "strong" });
+    const key = `pending_${Date.now()}_${payload.job_id}_${message.id}`;
+    await store.setJSON(key, payload);
 
-    // Return success - frontend polls or uses another mechanism
+    console.log('Stored thread update in Blobs:', payload.job_id, 'message:', message.id);
+
     return {
       statusCode: 200,
       headers: {
@@ -73,11 +74,8 @@ export async function handler(event, context) {
         status: 'received',
         job_id: payload.job_id,
         message_id: message.id,
-        direction: message.direction,
-        thread_count: payload.thread_count || 1,
-        unread_count: payload.unread_count || 0,
         timestamp: new Date().toISOString(),
-        message: 'Thread update received successfully.'
+        message: 'Thread update received and stored.'
       })
     };
   } catch (error) {

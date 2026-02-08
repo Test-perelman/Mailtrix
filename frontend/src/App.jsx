@@ -9,7 +9,7 @@ import { MOCK_JOBS, MOCK_THREADS, loadMockData, clearAllData } from './data/mock
 import styles from './App.module.css';
 
 function App() {
-  const { matches, addJobMatch, updateCandidateStatus, clearAll, setThreads } = useJobMatches();
+  const { matches, addJobMatch, updateCandidateStatus, clearAll, setThreads, addThreadMessage } = useJobMatches();
   const [isLoading, setIsLoading] = useState(false);
 
   // Calculate stats
@@ -42,22 +42,32 @@ function App() {
       }
     }
 
-    // Poll for new data from localStorage (set by serverless function)
-    const pollInterval = setInterval(() => {
-      const pending = localStorage.getItem('mailtrix_pending');
-      if (pending) {
-        try {
-          const jobs = JSON.parse(pending);
-          jobs.forEach(job => addJobMatch(job));
-          localStorage.removeItem('mailtrix_pending');
-        } catch (e) {
-          console.error('Failed to process pending jobs:', e);
+    // Poll for new matches and thread updates from Netlify Blobs
+    const pollInterval = setInterval(async () => {
+      try {
+        const [matchRes, threadRes] = await Promise.all([
+          fetch('/api/pending-matches'),
+          fetch('/api/pending-threads')
+        ]);
+        if (matchRes.ok) {
+          const { matches: pending } = await matchRes.json();
+          if (pending && pending.length > 0) {
+            pending.forEach(job => addJobMatch(job));
+          }
         }
+        if (threadRes.ok) {
+          const { updates } = await threadRes.json();
+          if (updates && updates.length > 0) {
+            updates.forEach(update => addThreadMessage(update.job_id, update.message));
+          }
+        }
+      } catch (e) {
+        // Silently ignore fetch errors (offline, etc.)
       }
-    }, 2000);
+    }, 3000);
 
     return () => clearInterval(pollInterval);
-  }, [addJobMatch]);
+  }, [addJobMatch, addThreadMessage]);
 
   const handleLoadMockData = () => {
     setIsLoading(true);
