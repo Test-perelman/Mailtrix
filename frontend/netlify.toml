@@ -6,8 +6,33 @@
 [build.environment]
   NODE_VERSION = "18"
 
+# API routes to Netlify functions (must come before SPA fallback)
+[[redirects]]
+  from = "/api/matches"
+  to = "/.netlify/functions/matches"
+  status = 200
+
+[[redirects]]
+  from = "/api/pending-matches"
+  to = "/.netlify/functions/pending-matches"
+  status = 200
+
+[[redirects]]
+  from = "/api/thread-update"
+  to = "/.netlify/functions/thread-update"
+  status = 200
+
+[[redirects]]
+  from = "/api/pending-threads"
+  to = "/.netlify/functions/pending-threads"
+  status = 200
+
+[[redirects]]
+  from = "/api/get-threads"
+  to = "/.netlify/functions/get-threads"
+  status = 200
+
 # SPA fallback - all other routes go to index.html
-# V2 functions use config.path for routing, no redirects needed
 [[redirects]]
   from = "/*"
   to = "/index.html"
@@ -15,6 +40,7 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 # Headers for security and CORS
 [[headers]]
