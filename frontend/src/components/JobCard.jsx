@@ -57,7 +57,13 @@ export default function JobCard({ job, onUpdateCandidate }) {
       .filter(c => c.status === 'approved')
       .map(c => ({
         match_id: c.match_id,
-        candidate_id: c.candidate_id
+        candidate_id: c.candidate_id,
+        candidate_name: c.candidate_name,
+        candidate_email: c.candidate_email,
+        candidate_skills: c.candidate_skills,
+        candidate_experience: c.candidate_experience,
+        match_score: c.match_score,
+        match_reason: c.match_reason
       }));
 
     if (approvedCandidates.length === 0) {

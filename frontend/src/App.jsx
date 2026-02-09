@@ -184,7 +184,7 @@ function App() {
         <div className={styles.footerWebhook}>
           <span className={styles.footerLabel}>Webhook:</span>
           <code className={styles.footerCode}>
-            {import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.352674918.xyz/webhook/approval'}
+            {import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.352674918.xyz/webhook/mailtrix-approval'}
           </code>
         </div>
       </footer>
