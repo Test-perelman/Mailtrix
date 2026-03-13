@@ -1,50 +1,157 @@
-// Vercel serverless function to receive job matches from n8n
-// POST /api/matches - stores data in Upstash Redis
+// /api/matches
+// POST  — receive new job match from n8n (upsert)
+// GET   — load matches for dashboard (?since=ISO&limit=N)
+// PATCH — batch update candidate statuses / sent_at
+// POST {_type:'status_update'} — sendBeacon path (same as PATCH)
 
-import { Redis } from '@upstash/redis';
+import { getPool } from './_db.js';
 
-const redis = Redis.fromEnv();
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type, X-API-Key',
+  'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+};
 
 export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  Object.entries(CORS_HEADERS).forEach(([k, v]) => res.setHeader(k, v));
+  if (req.method === 'OPTIONS') return res.status(200).end();
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  const pool = getPool();
+
+  // ── POST ──────────────────────────────────────────────────────────────
+  if (req.method === 'POST') {
+    const body = req.body || {};
+
+    // sendBeacon sends POST; detect batch-save payload by _type field
+    if (body._type === 'status_update') {
+      return handleBatchUpdate(pool, body.updates, res);
+    }
+
+    // Normal n8n inbound match upsert
+    const {
+      job_id, job_title, job_location, recruiter_email, recruiter_name,
+      received_at, required_skills, min_experience, candidates,
+    } = body;
+
+    if (!job_id || !candidates) {
+      return res.status(400).json({ error: 'job_id and candidates are required' });
+    }
+
+    try {
+      await pool.query(
+        `INSERT INTO job_matches
+           (job_id, job_title, job_location, recruiter_email, recruiter_name,
+            received_at, required_skills, min_experience, candidates, updated_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,NOW())
+         ON CONFLICT (job_id) DO UPDATE SET
+           job_title       = EXCLUDED.job_title,
+           job_location    = EXCLUDED.job_location,
+           recruiter_email = EXCLUDED.recruiter_email,
+           recruiter_name  = EXCLUDED.recruiter_name,
+           received_at     = EXCLUDED.received_at,
+           required_skills = EXCLUDED.required_skills,
+           min_experience  = EXCLUDED.min_experience,
+           candidates      = EXCLUDED.candidates,
+           updated_at      = NOW()`,
+        [
+          job_id, job_title, job_location, recruiter_email, recruiter_name,
+          received_at || new Date().toISOString(),
+          JSON.stringify(required_skills || []),
+          min_experience || null,
+          JSON.stringify(candidates),
+        ]
+      );
+      return res.status(200).json({
+        status: 'received',
+        job_id,
+        candidates_count: candidates.length,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (err) {
+      console.error('POST /api/matches error:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+  // ── GET ───────────────────────────────────────────────────────────────
+  if (req.method === 'GET') {
+    const since = req.query.since;
+    const limit = Math.min(parseInt(req.query.limit || '200', 10), 500);
+
+    try {
+      let result;
+      if (since) {
+        result = await pool.query(
+          `SELECT * FROM job_matches WHERE updated_at > $1 ORDER BY updated_at ASC LIMIT $2`,
+          [since, limit]
+        );
+      } else {
+        result = await pool.query(
+          `SELECT * FROM job_matches ORDER BY created_at DESC LIMIT $1`,
+          [limit]
+        );
+      }
+
+      // Always use MAX(updated_at) across all returned rows as the bookmark.
+      // This is critical for the initial (no `since`) load: rows are sorted by
+      // created_at DESC, so the last row is the oldest — its updated_at may be
+      // earlier than a recently-modified row near the top. Using MAX ensures the
+      // first incremental poll does not miss any updates.
+      const last_updated_at =
+        result.rows.length > 0
+          ? result.rows.reduce(
+              (max, r) => (r.updated_at > max ? r.updated_at : max),
+              result.rows[0].updated_at
+            )
+          : since || new Date().toISOString();
+
+      return res.status(200).json({ matches: result.rows, last_updated_at });
+    } catch (err) {
+      console.error('GET /api/matches error:', err.message);
+      return res.status(500).json({ error: err.message });
+    }
+  }
+
+  // ── PATCH ─────────────────────────────────────────────────────────────
+  if (req.method === 'PATCH') {
+    return handleBatchUpdate(pool, req.body?.updates, res);
+  }
+
+  return res.status(405).json({ error: 'Method not allowed' });
+}
+
+async function handleBatchUpdate(pool, updates, res) {
+  if (!updates || Object.keys(updates).length === 0) {
+    return res.status(400).json({ error: 'updates object required' });
   }
 
   try {
-    const jobMatch = req.body;
+    const promises = Object.entries(updates).map(([job_id, fields]) => {
+      const setClauses = [];
+      const values = [];
+      let i = 1;
 
-    if (!jobMatch.job_id || !jobMatch.candidates) {
-      return res.status(400).json({
-        error: 'Invalid payload',
-        message: 'job_id and candidates are required'
-      });
-    }
+      if (fields.candidates !== undefined) {
+        setClauses.push(`candidates = $${i++}`);
+        values.push(JSON.stringify(fields.candidates));
+      }
+      if (fields.sent_at !== undefined) {
+        setClauses.push(`sent_at = $${i++}`);
+        values.push(fields.sent_at);
+      }
+      setClauses.push('updated_at = NOW()');
+      values.push(job_id);
 
-    const key = `matches:pending_${Date.now()}_${jobMatch.job_id}`;
-    await redis.set(key, JSON.stringify(jobMatch));
-
-    console.log('Stored job match in Redis:', jobMatch.job_id, 'key:', key);
-
-    return res.status(200).json({
-      status: 'received',
-      job_id: jobMatch.job_id,
-      candidates_count: jobMatch.candidates?.length || 0,
-      timestamp: new Date().toISOString(),
-      message: 'Job match received and stored. Dashboard will display it shortly.'
+      return pool.query(
+        `UPDATE job_matches SET ${setClauses.join(', ')} WHERE job_id = $${i}`,
+        values
+      );
     });
-  } catch (error) {
-    console.error('Error processing request:', error);
-    return res.status(500).json({
-      error: 'Internal server error',
-      message: error.message
-    });
+
+    await Promise.all(promises);
+    return res.status(200).json({ status: 'updated', count: Object.keys(updates).length });
+  } catch (err) {
+    console.error('PATCH /api/matches error:', err.message);
+    return res.status(500).json({ error: err.message });
   }
 }

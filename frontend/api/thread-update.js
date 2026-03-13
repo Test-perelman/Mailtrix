@@ -1,58 +1,66 @@
-// Vercel serverless function to receive thread updates from n8n
-// POST /api/thread-update - stores in Upstash Redis
-
-import { Redis } from '@upstash/redis';
-
-const redis = Redis.fromEnv();
+// POST /api/thread-update — called by n8n to record an inbound or outbound message.
+// Bumps job_matches.updated_at so incremental polling detects the change.
+import { getPool } from './_db.js';
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-API-Key');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+  const { job_id, message } = req.body || {};
+  if (!job_id || !message) {
+    return res.status(400).json({ error: 'job_id and message are required' });
+  }
+  // message.id is required for idempotency — n8n should always send a Gmail message_id
+  if (!message.id) {
+    return res.status(400).json({ error: 'message.id is required' });
   }
 
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
-
+  const pool = getPool();
   try {
-    const payload = req.body;
+    // Upsert message — idempotent via partial unique index on message_id WHERE NOT NULL
+    await pool.query(
+      `INSERT INTO thread_messages
+         (message_id, job_id, direction, from_email, to_email, body, is_read, sent_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+       ON CONFLICT (message_id) WHERE message_id IS NOT NULL DO NOTHING`,
+      [
+        message.id,
+        job_id,
+        message.direction || 'inbound',
+        message.from_email || null,
+        message.to_email || null,
+        message.body || '',
+        false,
+        message.sent_at || new Date().toISOString(),
+      ]
+    );
 
-    if (!payload.job_id || !payload.message) {
-      return res.status(400).json({
-        error: 'Invalid payload',
-        message: 'job_id and message are required'
-      });
+    // Update job counters and bump updated_at so polling detects this
+    if (message.direction === 'inbound') {
+      await pool.query(
+        `UPDATE job_matches
+         SET unread_count = unread_count + 1,
+             thread_count = thread_count + 1,
+             updated_at   = NOW()
+         WHERE job_id = $1`,
+        [job_id]
+      );
+    } else {
+      await pool.query(
+        `UPDATE job_matches
+         SET thread_count = thread_count + 1,
+             updated_at   = NOW()
+         WHERE job_id = $1`,
+        [job_id]
+      );
     }
 
-    const { message } = payload;
-    if (!message.id || !message.direction || !message.body) {
-      return res.status(400).json({
-        error: 'Invalid message structure',
-        message: 'message must include id, direction, and body'
-      });
-    }
-
-    const key = `threads:pending_${Date.now()}_${payload.job_id}_${message.id}`;
-    await redis.set(key, JSON.stringify(payload));
-
-    console.log('Stored thread update in Redis:', payload.job_id, 'message:', message.id);
-
-    return res.status(200).json({
-      status: 'received',
-      job_id: payload.job_id,
-      message_id: message.id,
-      timestamp: new Date().toISOString(),
-      message: 'Thread update received and stored.'
-    });
-  } catch (error) {
-    console.error('Error processing thread update:', error);
-    return res.status(500).json({
-      error: 'Internal server error',
-      message: error.message
-    });
+    return res.status(200).json({ status: 'ok' });
+  } catch (err) {
+    console.error('POST /api/thread-update error:', err.message);
+    return res.status(500).json({ error: err.message });
   }
 }
