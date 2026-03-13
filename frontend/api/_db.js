@@ -8,6 +8,9 @@ const { Pool } = pg;
 
 export function getPool() {
   if (!globalThis._mailtrixPool) {
+    if (!process.env.DATABASE_URL) {
+      throw new Error('DATABASE_URL environment variable is not set');
+    }
     globalThis._mailtrixPool = new Pool({
       connectionString: process.env.DATABASE_URL,
       max: 3,

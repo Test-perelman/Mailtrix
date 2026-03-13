@@ -19,13 +19,15 @@ export default async function handler(req, res) {
       [job_id]
     );
 
-    // Mark all messages read + reset unread count (fire-and-forget is fine)
-    await Promise.all([
+    const messages = result.rows;
+
+    // Mark as read — don't let this failure affect the response
+    Promise.all([
       pool.query(`UPDATE thread_messages SET is_read = TRUE WHERE job_id = $1`, [job_id]),
       pool.query(`UPDATE job_matches SET unread_count = 0 WHERE job_id = $1`, [job_id]),
-    ]);
+    ]).catch(err => console.error('GET /api/threads mark-as-read error:', err.message));
 
-    return res.status(200).json({ messages: result.rows });
+    return res.status(200).json({ messages });
   } catch (err) {
     console.error('GET /api/threads error:', err.message);
     return res.status(500).json({ error: err.message });

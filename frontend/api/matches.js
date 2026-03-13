@@ -33,7 +33,7 @@ export default async function handler(req, res) {
       received_at, required_skills, min_experience, candidates,
     } = body;
 
-    if (!job_id || !candidates) {
+    if (!job_id || !Array.isArray(candidates)) {
       return res.status(400).json({ error: 'job_id and candidates are required' });
     }
 
@@ -76,7 +76,14 @@ export default async function handler(req, res) {
   // ── GET ───────────────────────────────────────────────────────────────
   if (req.method === 'GET') {
     const since = req.query.since;
-    const limit = Math.min(parseInt(req.query.limit || '200', 10), 500);
+
+    // Validate since
+    if (since && isNaN(Date.parse(since))) {
+      return res.status(400).json({ error: '`since` must be a valid ISO timestamp' });
+    }
+
+    // Safe limit
+    const limit = Math.min(parseInt(req.query.limit, 10) || 200, 500);
 
     try {
       let result;
@@ -121,29 +128,32 @@ export default async function handler(req, res) {
 }
 
 async function handleBatchUpdate(pool, updates, res) {
-  if (!updates || Object.keys(updates).length === 0) {
-    return res.status(400).json({ error: 'updates object required' });
+  if (!updates || typeof updates !== 'object' || Array.isArray(updates) || Object.keys(updates).length === 0) {
+    return res.status(400).json({ error: 'updates must be a non-empty object' });
   }
 
   try {
     const promises = Object.entries(updates).map(([job_id, fields]) => {
       const setClauses = [];
       const values = [];
-      let i = 1;
 
       if (fields.candidates !== undefined) {
-        setClauses.push(`candidates = $${i++}`);
+        setClauses.push(`candidates = $${values.length + 1}`);
         values.push(JSON.stringify(fields.candidates));
       }
       if (fields.sent_at !== undefined) {
-        setClauses.push(`sent_at = $${i++}`);
+        setClauses.push(`sent_at = $${values.length + 1}`);
         values.push(fields.sent_at);
       }
+
+      // Skip if no meaningful fields were provided
+      if (setClauses.length === 0) return Promise.resolve();
+
       setClauses.push('updated_at = NOW()');
-      values.push(job_id);
+      values.push(job_id); // always last
 
       return pool.query(
-        `UPDATE job_matches SET ${setClauses.join(', ')} WHERE job_id = $${i}`,
+        `UPDATE job_matches SET ${setClauses.join(', ')} WHERE job_id = $${values.length}`,
         values
       );
     });

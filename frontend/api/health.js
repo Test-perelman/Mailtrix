@@ -11,6 +11,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ status: 'ok', db: 'connected', time: result.rows[0].time });
   } catch (err) {
     console.error('Health check failed:', err.message);
-    return res.status(500).json({ status: 'error', message: err.message });
+    return res.status(500).json({ status: 'error', message: 'Database connection failed' });
   }
 }

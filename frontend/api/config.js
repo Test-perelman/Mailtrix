@@ -26,6 +26,9 @@ export default async function handler(req, res) {
     if (!updates || typeof updates !== 'object' || Array.isArray(updates)) {
       return res.status(400).json({ error: 'Body must be a { key: value } object' });
     }
+    if (Object.keys(updates).length > 50) {
+      return res.status(400).json({ error: 'Too many keys in a single PUT (max 50)' });
+    }
     try {
       await Promise.all(
         Object.entries(updates).map(([key, value]) =>

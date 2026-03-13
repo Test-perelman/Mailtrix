@@ -21,7 +21,7 @@ export default async function handler(req, res) {
   const pool = getPool();
   try {
     // Upsert message — idempotent via partial unique index on message_id WHERE NOT NULL
-    await pool.query(
+    const insertResult = await pool.query(
       `INSERT INTO thread_messages
          (message_id, job_id, direction, from_email, to_email, body, is_read, sent_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
@@ -37,6 +37,11 @@ export default async function handler(req, res) {
         message.sent_at || new Date().toISOString(),
       ]
     );
+
+    // Only update counters if a new row was actually inserted (not a duplicate)
+    if (insertResult.rowCount === 0) {
+      return res.status(200).json({ status: 'ok', note: 'duplicate message_id, skipped' });
+    }
 
     // Update job counters and bump updated_at so polling detects this
     if (message.direction === 'inbound') {
