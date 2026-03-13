@@ -7,20 +7,21 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import CandidateRow from './CandidateRow';
 import ConversationThread from './ConversationThread';
-import { useJobMatches } from '../store/useStore';
+import { useJobMatches, useConfig } from '../store/useStore';
 import styles from './JobCard.module.css';
 
-const N8N_WEBHOOK_URL = import.meta.env.VITE_N8N_WEBHOOK_URL || 'https://n8n.352674918.xyz/webhook/mailtrix-approval';
-const API_KEY = import.meta.env.VITE_APPROVAL_API_KEY || '';
+export default function JobCard({ job, onUpdateCandidate, readOnly = false }) {
+  const { config } = useConfig();
+  const N8N_WEBHOOK_URL = config.approval_webhook_url || '';
+  const API_KEY = import.meta.env.VITE_APPROVAL_API_KEY || '';
 
-export default function JobCard({ job, onUpdateCandidate }) {
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeTab, setActiveTab] = useState('candidates'); // 'candidates' or 'conversation'
   const [isSending, setIsSending] = useState(false);
   const [sendStatus, setSendStatus] = useState(null);
   const [managerNotes, setManagerNotes] = useState('');
 
-  const { getThreadsByJobId, setThreads, markThreadsRead } = useJobMatches();
+  const { getThreadsByJobId, setThreads, markThreadsRead, markJobSent } = useJobMatches();
 
   const {
     job_id,
@@ -62,6 +63,7 @@ export default function JobCard({ job, onUpdateCandidate }) {
         candidate_email: c.candidate_email,
         candidate_skills: c.candidate_skills,
         candidate_experience: c.candidate_experience,
+        resume_url: c.resume_url || '',
         match_score: c.match_score,
         match_reason: c.match_reason
       }));
@@ -91,6 +93,8 @@ export default function JobCard({ job, onUpdateCandidate }) {
 
       if (response.ok) {
         setSendStatus('success');
+        // Move job to "Sent" after user sees confirmation
+        setTimeout(() => markJobSent(job_id), 1500);
       } else {
         throw new Error('Failed to send approvals');
       }
@@ -265,14 +269,15 @@ export default function JobCard({ job, onUpdateCandidate }) {
                       key={candidate.candidate_id || index}
                       candidate={candidate}
                       index={index}
-                      onApprove={() => onUpdateCandidate(job_id, candidate.candidate_id, 'approved')}
-                      onReject={() => onUpdateCandidate(job_id, candidate.candidate_id, 'rejected')}
+                      onApprove={readOnly ? undefined : () => onUpdateCandidate(job_id, candidate.candidate_id, 'approved')}
+                      onReject={readOnly ? undefined : () => onUpdateCandidate(job_id, candidate.candidate_id, 'rejected')}
+                      readOnly={readOnly}
                     />
                   ))}
                 </div>
 
                 {/* Action bar */}
-                {approvedCount > 0 && (
+                {!readOnly && approvedCount > 0 && (
                   <div className={styles.actionBar}>
                     <div className={styles.notesField}>
                       <label className={styles.notesLabel}>Add notes for recruiter</label>

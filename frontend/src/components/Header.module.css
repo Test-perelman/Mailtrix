@@ -147,6 +147,12 @@
   border-color: rgba(0, 214, 143, 0.3);
 }
 
+.statIconSent {
+  color: var(--cyan-primary);
+  background: var(--accent-cyan-glow);
+  border-color: rgba(0, 173, 181, 0.3);
+}
+
 .statInfo {
   display: flex;
   flex-direction: column;
@@ -355,3 +361,109 @@
     height: 24px;
   }
 }
+
+/* ── Settings panel ────────────────────────────────────────────── */
+.settingsWrapper {
+  position: relative;
+}
+
+.settingsBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 8px;
+  padding: 6px 8px;
+  cursor: pointer;
+  color: var(--text-secondary, #888);
+  transition: color 0.2s, border-color 0.2s;
+}
+.settingsBtn:hover {
+  color: var(--text-primary, #fff);
+  border-color: var(--accent, #6366f1);
+}
+
+.settingsPanel {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--card-bg, #1a1a2e);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 12px;
+  padding: 16px;
+  min-width: 360px;
+  z-index: 200;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.settingsPanelHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary, #fff);
+  margin-bottom: 14px;
+}
+
+.settingsClose {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary, #888);
+  display: flex;
+  align-items: center;
+  padding: 2px;
+}
+.settingsClose:hover { color: var(--text-primary, #fff); }
+
+.settingsField {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.settingsLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #888);
+}
+
+.settingsInput {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border, rgba(255,255,255,0.1));
+  border-radius: 6px;
+  padding: 8px 10px;
+  color: var(--text-primary, #fff);
+  font-size: 12px;
+  font-family: monospace;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+}
+.settingsInput:focus {
+  outline: none;
+  border-color: var(--accent, #6366f1);
+}
+
+.settingsSaveBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  background: var(--accent, #6366f1);
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 9px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.settingsSaveBtn:hover:not(:disabled) { opacity: 0.85; }
+.settingsSaveBtn:disabled { opacity: 0.5; cursor: default; }

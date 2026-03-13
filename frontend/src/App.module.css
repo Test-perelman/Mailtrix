@@ -39,6 +39,65 @@
   padding: var(--space-6) var(--space-6) var(--space-8);
 }
 
+/* Page navigation tabs */
+.pageNav {
+  display: flex;
+  gap: var(--space-1);
+  margin-bottom: var(--space-5);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.navTab {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-5);
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  transition: all var(--duration-fast) var(--ease-out);
+  cursor: pointer;
+}
+
+.navTab:hover {
+  color: var(--text-secondary);
+}
+
+.navTabActive {
+  color: var(--cyan-primary);
+  border-bottom-color: var(--cyan-primary);
+}
+
+.navBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 var(--space-2);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 11px;
+  background: var(--surface-elevated);
+  color: var(--text-secondary);
+}
+
+.navTabActive .navBadge {
+  background: var(--cyan-primary);
+  color: var(--light-primary);
+}
+
+.navBadgeSent {
+  background: var(--surface-elevated);
+}
+
+.navTabActive .navBadgeSent {
+  background: var(--cyan-primary);
+  color: var(--light-primary);
+}
+
 /* Toolbar */
 .toolbar {
   display: flex;
@@ -179,6 +238,15 @@
   animation: spin 1s linear infinite;
 }
 
+.initLoading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 24px;
+  color: var(--text-secondary, #888);
+  font-size: 14px;
+}
+
 /* Content */
 .content {
   min-height: 500px;
@@ -188,6 +256,36 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-5);
+}
+
+/* Empty sent state */
+.emptySent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-12) var(--space-6);
+  text-align: center;
+}
+
+.emptySentIcon {
+  color: var(--text-muted);
+  opacity: 0.3;
+  margin-bottom: var(--space-4);
+}
+
+.emptySentTitle {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-2);
+}
+
+.emptySentText {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  max-width: 400px;
 }
 
 /* Footer */

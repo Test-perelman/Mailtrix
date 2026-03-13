@@ -1,9 +1,43 @@
+import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Zap, Clock, Users, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, Zap, Clock, Users, CheckCircle, AlertCircle, Send, Settings, X, Save } from 'lucide-react';
 import styles from './Header.module.css';
 import ThemeToggle from './ThemeToggle';
+import { useConfig } from '../store/useStore';
 
 export default function Header({ stats }) {
+  const { config, updateConfig } = useConfig();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [approvalUrl, setApprovalUrl]   = useState('');
+  const [replyUrl, setReplyUrl]         = useState('');
+  const [saving, setSaving]             = useState(false);
+  const panelRef = useRef(null);
+
+  // Sync form inputs when config loads or changes
+  useEffect(() => {
+    setApprovalUrl(config.approval_webhook_url || '');
+    setReplyUrl(config.reply_webhook_url || '');
+  }, [config.approval_webhook_url, config.reply_webhook_url]);
+
+  // Close panel on outside click
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const handleClick = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, [settingsOpen]);
+
+  const handleSave = async () => {
+    setSaving(true);
+    await updateConfig({ approval_webhook_url: approvalUrl, reply_webhook_url: replyUrl });
+    setSaving(false);
+    setSettingsOpen(false);
+  };
+
   return (
     <header className={styles.header}>
       <div className={styles.container}>
@@ -91,6 +125,20 @@ export default function Header({ stats }) {
               <span className={styles.statLabel}>Approved</span>
             </div>
           </div>
+
+          <div className={styles.statDivider} />
+
+          <div className={styles.statPill}>
+            <div className={`${styles.statIcon} ${styles.statIconSent}`}>
+              <Send size={16} />
+            </div>
+            <div className={styles.statInfo}>
+              <span className={styles.statValue}>
+                {stats.sentJobs || 0}
+              </span>
+              <span className={styles.statLabel}>Sent</span>
+            </div>
+          </div>
         </motion.div>
 
         {/* Status indicator */}
@@ -115,6 +163,55 @@ export default function Header({ stats }) {
             <span>{new Date().toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</span>
           </div>
           <ThemeToggle />
+
+          {/* Settings */}
+          <div className={styles.settingsWrapper} ref={panelRef}>
+            <button
+              className={styles.settingsBtn}
+              onClick={() => setSettingsOpen(s => !s)}
+              title="Webhook settings"
+            >
+              <Settings size={16} />
+            </button>
+
+            {settingsOpen && (
+              <div className={styles.settingsPanel}>
+                <div className={styles.settingsPanelHeader}>
+                  <span>Webhook Settings</span>
+                  <button className={styles.settingsClose} onClick={() => setSettingsOpen(false)}>
+                    <X size={14} />
+                  </button>
+                </div>
+
+                <div className={styles.settingsField}>
+                  <label className={styles.settingsLabel}>Approval Webhook URL</label>
+                  <input
+                    className={styles.settingsInput}
+                    value={approvalUrl}
+                    onChange={e => setApprovalUrl(e.target.value)}
+                    placeholder="https://n8n.xxx/webhook/mailtrix-approval"
+                    spellCheck={false}
+                  />
+                </div>
+
+                <div className={styles.settingsField}>
+                  <label className={styles.settingsLabel}>Reply Webhook URL</label>
+                  <input
+                    className={styles.settingsInput}
+                    value={replyUrl}
+                    onChange={e => setReplyUrl(e.target.value)}
+                    placeholder="https://n8n.xxx/webhook/mailtrix-reply"
+                    spellCheck={false}
+                  />
+                </div>
+
+                <button className={styles.settingsSaveBtn} onClick={handleSave} disabled={saving}>
+                  <Save size={14} />
+                  <span>{saving ? 'Saving…' : 'Save'}</span>
+                </button>
+              </div>
+            )}
+          </div>
         </motion.div>
       </div>
 

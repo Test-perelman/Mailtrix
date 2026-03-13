@@ -3,12 +3,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { MessageSquare, RefreshCw, Loader2, Send, Mail } from 'lucide-react';
 import MessageBubble from './MessageBubble';
 import ReplyComposer from './ReplyComposer';
+import { useConfig } from '../store/useStore';
 import styles from './ConversationThread.module.css';
 
-const N8N_REPLY_URL = import.meta.env.VITE_N8N_REPLY_URL || 'https://n8n.352674918.xyz/webhook/mailtrix-reply';
-const API_KEY = import.meta.env.VITE_APPROVAL_API_KEY || '';
-
 export default function ConversationThread({ jobId, threads = [], onRefresh }) {
+  const { config } = useConfig();
+  const N8N_REPLY_URL = config.reply_webhook_url || '';
+  const API_KEY = import.meta.env.VITE_APPROVAL_API_KEY || '';
+
   const [isLoading, setIsLoading] = useState(false);
   const [isSending, setIsSending] = useState(false);
   const [sendStatus, setSendStatus] = useState(null);
@@ -19,13 +21,13 @@ export default function ConversationThread({ jobId, threads = [], onRefresh }) {
     new Date(a.sent_at) - new Date(b.sent_at)
   );
 
-  // Check if we've sent any outbound emails (conversation only starts when recruiter responds to our email)
+  // Check message types
   const hasOutboundEmail = sortedThreads.some(msg => msg.direction === 'outbound');
   const hasInboundReply = sortedThreads.some(msg => msg.direction === 'inbound');
   const hasMessages = sortedThreads.length > 0;
 
-  // Conversation is active only if we've sent at least one outbound email
-  const conversationStarted = hasOutboundEmail;
+  // Show conversation when any messages exist (outbound or inbound)
+  const conversationStarted = hasMessages;
 
   // Scroll to bottom when new messages arrive
   useEffect(() => {
